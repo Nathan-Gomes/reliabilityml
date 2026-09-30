@@ -15,11 +15,11 @@ from typing import Any
 import numpy as np
 import yaml
 
+from ..paths import ROOT
 from .assistant import REFUSAL, Assistant
 from .corpus import chunk_documents, load_documents
 from .index import VectorStore, make_embedder
 
-ROOT = Path(__file__).resolve().parents[3]
 QUESTIONS = ROOT / "eval" / "rag_questions.yaml"
 log = logging.getLogger(__name__)
 

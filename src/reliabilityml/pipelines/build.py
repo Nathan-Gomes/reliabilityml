@@ -25,10 +25,10 @@ from ..detection.evaluate import choose_operating_point, evaluate, match
 from ..features.windows import MinuteData, minute_data, z_matrix, z_scores
 from ..generator.simulate import Telemetry, default_ops, default_test, default_train, default_upgrade, simulate
 from ..generator.topology import SERVICE_NAMES
+from ..paths import ROOT
 from ..slo import engine as slo
 
 log = logging.getLogger("reliabilityml.pipeline")
-ROOT = Path(__file__).resolve().parents[3]
 ARTIFACTS = ROOT / "artifacts"
 OFFSETS_MIN = [1, 2, 3, 4, 6]  # window positions after fault onset used for training/eval windows
 VALIDATION_FROM_DAY = 22

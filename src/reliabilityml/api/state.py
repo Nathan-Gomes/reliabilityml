@@ -12,11 +12,12 @@ import pandas as pd
 
 from ..classifier.registry import Registry
 from ..generator.topology import CALLS, SERVICE_NAMES
+from ..paths import ROOT
 from ..rag.assistant import Assistant
 from ..rag.corpus import chunk_documents, load_documents
 from ..rag.index import VectorStore, make_embedder
 
-ARTIFACTS = Path(os.environ.get("RELIABILITYML_ARTIFACTS", Path(__file__).resolve().parents[3] / "artifacts"))
+ARTIFACTS = Path(os.environ.get("RELIABILITYML_ARTIFACTS", ROOT / "artifacts"))
 
 
 def _json(path: Path):

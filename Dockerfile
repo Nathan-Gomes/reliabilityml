@@ -8,7 +8,7 @@ RUN npx tsc -b && npx vite build --outDir /web/dist
 
 # Stage 2: run the pipeline once to produce data, models and reports (deterministic seeds).
 FROM python:3.12-slim AS pipeline
-ENV PYTHONUNBUFFERED=1 RELIABILITYML_MLFLOW=0
+ENV PYTHONUNBUFFERED=1 RELIABILITYML_MLFLOW=0 RELIABILITYML_HOME=/app
 WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY src ./src
@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir . && python -m reliabilityml.pipelines.build
 
 # Stage 3: lean runtime. No MLflow or training dependencies; the API loads the production model artifact.
 FROM python:3.12-slim
-ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 RELIABILITYML_MLFLOW=0 RELIABILITYML_ARTIFACTS=/app/artifacts
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 RELIABILITYML_MLFLOW=0 RELIABILITYML_HOME=/app RELIABILITYML_ARTIFACTS=/app/artifacts
 WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY src ./src

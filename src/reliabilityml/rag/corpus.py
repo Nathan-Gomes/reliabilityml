@@ -8,7 +8,9 @@ from pathlib import Path
 
 import yaml
 
-CORPUS_DIR = Path(__file__).resolve().parents[3] / "corpus"
+from ..paths import ROOT
+
+CORPUS_DIR = ROOT / "corpus"
 
 
 @dataclass
