@@ -31,6 +31,7 @@ def test_multiwindow_alert_needs_both_windows():
     sli = pd.DataFrame({"total": total, "bad_availability": bad})
     alerts = slo.burn_alerts(sli, "bad_availability", slo.AVAILABILITY)
     assert alerts[alerts["rule"].str.startswith("1h")].shape[0] == 1  # 1.5% over an hour still > 14.4x
+    assert alerts[alerts["rule"].str.startswith("3D")].empty  # never fires before 3 days of data exist
     bad.iloc[100:103] = 1000 * 0.05  # 0.25% over the hour: the short window spikes, the long one does not
     quiet = slo.burn_alerts(
         pd.DataFrame({"total": total, "bad_availability": bad}), "bad_availability", slo.AVAILABILITY

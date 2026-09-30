@@ -17,7 +17,7 @@ runbooks with citations, and gates deploys and model promotions on measured evid
 | Detection | **2.8 min** median time to detect, **95%** of incidents caught (18/19), **0** false alerts per day | Isolation Forest: 100% recall, 2.3 min, 1.1 false alerts/day |
 | Classification | **0.96** macro F1 on real alerts (0.98 on incident windows) | Hand-written rules from the runbooks: 0.83 (0.74) |
 | Unseen failure type | **5 of 5** memory-leak alerts routed to `unknown` (held out of training) | Rules: 1 of 5 labelled correctly, 2 routed to unknown |
-| SLOs | 99.9% availability SLO, **60–93%** of error budget left across services | Multi-window burn-rate alerts: 17 fired over 30 days |
+| SLOs | 99.9% availability SLO, **60–93%** of error budget left across services | Multi-window burn-rate alerts: 16 fired over 30 days, all during incidents |
 | RAG assistant | **100%** right document in top 3, **80%** correct refusals, **0%** false refusals (30 questions) | Manual check: 21 of 25 answers fully answer the question |
 | Drift | PSI **7.9** after a platform upgrade; retrained candidate **rejected** (tied, not better) | Features are baseline-relative: median feature PSI 0.07 |
 | Deploy gate | Blocks slower, buggier and weaker-model releases and features during a budget freeze | Urgent fixes exempt from the freeze |

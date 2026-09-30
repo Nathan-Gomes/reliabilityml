@@ -91,6 +91,9 @@ def burn_alerts(sli: pd.DataFrame, column: str, slo: Slo) -> pd.DataFrame:
         long = rolling_burn(sli, column, rule.long, slo)
         short = rolling_burn(sli, column, rule.short, slo)
         firing = (long > rule.threshold) & (short > rule.threshold)
+        # A rule can only fire once its long window is full of data; a 3-day window holding one hour
+        # of history would otherwise page on the first few errors.
+        firing &= sli.index >= sli.index[0] + pd.Timedelta(rule.long) - pd.Timedelta(minutes=1)
         start = None
         for ts, on in firing.items():
             if on and start is None:
