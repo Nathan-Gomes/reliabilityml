@@ -22,7 +22,10 @@ runbooks with citations, and gates deploys and model promotions on measured evid
 | Drift | PSI **7.9** after a platform upgrade; retrained candidate **rejected** (tied, not better) | Features are baseline-relative: median feature PSI 0.07 |
 | Deploy gate | Blocks slower, buggier and weaker-model releases and features during a budget freeze | Urgent fixes exempt from the freeze |
 
-Every number is written by the pipeline to `artifacts/summary.json`; nothing above is typed by hand.
+Every number is written by the pipeline to `artifacts/summary.json`; nothing above is typed by hand. Figures are
+from the reference run (macOS, Python 3.10, scikit-learn 1.7). Seeds make runs repeatable on one platform, but
+other library versions can move results in the second decimal place: the Linux CI run measured 0.973
+window-level macro F1 against 0.979 here.
 Honest weak spots are called out where they appear, and in [Limitations](#limitations).
 
 ## How it works
