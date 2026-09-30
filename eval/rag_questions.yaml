@@ -1,0 +1,122 @@
+# RAG evaluation set: 25 answerable questions and 5 that must be refused.
+# expected_docs lists every document that contains the answer.
+- id: q01
+  question: What connection count on postgres-db means the pool is saturated?
+  expected_docs: [rb-database-saturation]
+  answerable: true
+- id: q02
+  question: How do I find long-running transactions holding database connections?
+  expected_docs: [rb-database-saturation]
+  answerable: true
+- id: q03
+  question: Should I raise the database pool maximum above 100 during an incident?
+  expected_docs: [rb-database-saturation]
+  answerable: true
+- id: q04
+  question: How do I roll back a bad release of a service?
+  expected_docs: [rb-deployment-regression, policy-deploy-and-rollback]
+  answerable: true
+- id: q05
+  question: How quickly should the error rate recover after a rollback?
+  expected_docs: [rb-deployment-regression, pm-2026-03-auth-release-500s]
+  answerable: true
+- id: q06
+  question: How can I tell a traffic spike apart from database saturation?
+  expected_docs: [rb-traffic-spike, rb-database-saturation]
+  answerable: true
+- id: q07
+  question: What is the gateway rate limit per API key when one client dominates traffic?
+  expected_docs: [rb-traffic-spike]
+  answerable: true
+- id: q08
+  question: How do I raise the autoscaling maximum for api-gateway?
+  expected_docs: [rb-traffic-spike]
+  answerable: true
+- id: q09
+  question: What does a memory leak look like in the memory graph?
+  expected_docs: [rb-memory-leak]
+  answerable: true
+- id: q10
+  question: How often should I schedule rolling restarts to contain a memory leak?
+  expected_docs: [rb-memory-leak]
+  answerable: true
+- id: q11
+  question: How far back should I look for a deploy when a memory leak is suspected?
+  expected_docs: [rb-memory-leak]
+  answerable: true
+- id: q12
+  question: Errors are spreading from auth-service to its callers. How do I find the origin?
+  expected_docs: [rb-dependency-failure, pm-2026-01-identity-provider-outage]
+  answerable: true
+- id: q13
+  question: How do I open the circuit breaker for auth-service on the gateway?
+  expected_docs: [rb-dependency-failure]
+  answerable: true
+- id: q14
+  question: For how long can the gateway serve cached sessions when auth fails?
+  expected_docs: [rb-dependency-failure, pm-2026-01-identity-provider-outage]
+  answerable: true
+- id: q15
+  question: The classifier returned unknown for an alert. What should I check first?
+  expected_docs: [rb-triage-unknown]
+  answerable: true
+- id: q16
+  question: How many minutes of downtime does a 99.9% availability SLO allow over 30 days?
+  expected_docs: [policy-slo-error-budget]
+  answerable: true
+- id: q17
+  question: What burn rate on the 1-hour window triggers a page?
+  expected_docs: [policy-slo-error-budget]
+  answerable: true
+- id: q18
+  question: What happens to releases when less than 25% of the error budget remains?
+  expected_docs: [policy-slo-error-budget]
+  answerable: true
+- id: q19
+  question: When does a canary replay fail the deployment gate?
+  expected_docs: [policy-deploy-and-rollback]
+  answerable: true
+- id: q20
+  question: Are deploys allowed on Friday evening?
+  expected_docs: [policy-deploy-and-rollback]
+  answerable: true
+- id: q21
+  question: When should the database on-call be paged?
+  expected_docs: [policy-escalation-oncall, rb-database-saturation]
+  answerable: true
+- id: q22
+  question: What was the root cause of the checkout slowdown caused by pool exhaustion?
+  expected_docs: [pm-2026-02-checkout-pool-exhaustion]
+  answerable: true
+- id: q23
+  question: Why did rolling back the gateway not fix the payment dependency failure?
+  expected_docs: [pm-2026-08-coincidental-deploy]
+  answerable: true
+- id: q24
+  question: What broke token refresh in the auth-service release?
+  expected_docs: [pm-2026-03-auth-release-500s]
+  answerable: true
+- id: q25
+  question: Why was the orders memory leak classified as unknown?
+  expected_docs: [pm-2026-07-orders-memory-leak]
+  answerable: true
+- id: q26
+  question: What consumer lag threshold should trigger an alert on the Kafka cluster?
+  expected_docs: []
+  answerable: false
+- id: q27
+  question: How do I rotate the TLS certificates on the CDN?
+  expected_docs: []
+  answerable: false
+- id: q28
+  question: What is the hourly on-call compensation rate?
+  expected_docs: []
+  answerable: false
+- id: q29
+  question: Which Redis eviction policy should the session cache use?
+  expected_docs: []
+  answerable: false
+- id: q30
+  question: How do I restore postgres-db from last night's backup snapshot?
+  expected_docs: []
+  answerable: false

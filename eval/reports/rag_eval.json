@@ -1,0 +1,57 @@
+{
+  "config": {
+    "embedder": "lsa",
+    "k": 4,
+    "min_score": 0.0,
+    "min_overlap": 2,
+    "min_coverage": 0.4,
+    "chunks": 65,
+    "documents": 17,
+    "refusal_message": "I couldn't find this in the approved runbooks or postmortems."
+  },
+  "retrieval": {
+    "tfidf": {
+      "hit@1": 0.96,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "top_score_answerable_median": 0.27556116378992157,
+      "top_score_unanswerable_median": 0.12087556558371373
+    },
+    "lsa": {
+      "hit@1": 0.96,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "top_score_answerable_median": 0.5256935320238727,
+      "top_score_unanswerable_median": 0.44262779394859686
+    }
+  },
+  "runs": {
+    "extractive": {
+      "engine": "extractive",
+      "prompt_version": null,
+      "full": {
+        "correct_refusal_rate": 0.8,
+        "false_refusal_rate": 0.0,
+        "citation_accuracy": 0.8,
+        "cites_expected_doc": 0.96,
+        "answered": 25
+      },
+      "test_half": {
+        "correct_refusal_rate": 0.6666666666666666,
+        "false_refusal_rate": 0.0,
+        "citation_accuracy": 0.9166666666666666,
+        "cites_expected_doc": 1.0,
+        "answered": 12
+      }
+    }
+  },
+  "headline": {
+    "embedder": "lsa",
+    "hit_at_3": 1.0,
+    "hit_at_1": 0.96,
+    "correct_refusal_rate": 0.8,
+    "false_refusal_rate": 0.0,
+    "citation_accuracy": 0.8,
+    "questions": 30
+  }
+}

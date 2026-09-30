@@ -1,0 +1,60 @@
+name: Deploy
+
+# Deploys only after CI succeeds on main, and only if the deployment gate passes.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  gate:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install .
+      - run: python -m reliabilityml.pipelines.build
+        env:
+          RELIABILITYML_MLFLOW: "0"
+      - name: Deployment gate (tests passed in CI; canary replay, model and error-budget checks run here)
+        run: python -m reliabilityml.gate.validate --scenario clean_release --tests-passed true
+
+  render:
+    needs: gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "RENDER_DEPLOY_HOOK not set; skipping"; exit 0; fi
+          curl -fsS -X POST "$HOOK"
+
+  cloud-run:
+    # Runs only when the GCP project is configured (repository variable GCP_PROJECT_ID plus
+    # Workload Identity Federation). See infra/terraform.
+    needs: gate
+    if: ${{ vars.GCP_PROJECT_ID != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SA }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - run: |
+          IMAGE=${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/reliabilityml/api:${{ github.sha }}
+          gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev --quiet
+          docker build -t "$IMAGE" . && docker push "$IMAGE"
+          gcloud run deploy reliabilityml-api --image "$IMAGE" --region ${{ vars.GCP_REGION }} --quiet

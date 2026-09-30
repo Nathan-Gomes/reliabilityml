@@ -1,0 +1,20 @@
+# Multi-window burn-rate alerts (Google SRE Workbook). The API exports burn rates per window.
+groups:
+  - name: slo-burn-rate
+    rules:
+      - alert: ErrorBudgetFastBurn
+        expr: rml_slo_burn_rate{window="1h"} > 14.4 and rml_slo_burn_rate{window="5min"} > 14.4
+        labels: {severity: page}
+        annotations:
+          summary: "{{ $labels.service }} is burning 2% of its 30-day budget per hour"
+      - alert: ErrorBudgetSlowBurn
+        expr: rml_slo_burn_rate{window="6h"} > 6
+        for: 30m
+        labels: {severity: page}
+        annotations:
+          summary: "{{ $labels.service }} is burning 5% of its budget every 6 hours"
+      - alert: ReleaseFreeze
+        expr: rml_slo_budget_remaining < 0.25
+        labels: {severity: ticket}
+        annotations:
+          summary: "{{ $labels.service }} has under 25% error budget left: non-urgent releases are frozen"

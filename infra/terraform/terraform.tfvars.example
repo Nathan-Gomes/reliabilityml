@@ -1,0 +1,5 @@
+project_id      = "my-gcp-project"
+billing_account = "000000-000000-000000"
+alert_email     = "you@example.com"
+image           = "us-central1-docker.pkg.dev/my-gcp-project/reliabilityml/api:latest"
+budget_usd      = 10

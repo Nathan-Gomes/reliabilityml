@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: reliabilityml
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    autoDeploy: false  # deploys are triggered by the Deploy workflow after the gate passes
+    envVars:
+      - key: REPLAY_SECONDS_PER_MINUTE
+        value: "5"
+      - key: RELIABILITYML_ANTHROPIC_API_KEY
+        sync: false
