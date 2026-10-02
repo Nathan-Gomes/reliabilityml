@@ -176,6 +176,8 @@ set (docker-compose sends traces to Jaeger), so the platform monitors its own re
 
 ## Run it
 
+Prerequisites: Python 3.10+ and Node.js 22.12+.
+
 ```bash
 python -m venv .venv && .venv/bin/pip install -e '.[dev,mlops]'
 .venv/bin/python -m reliabilityml.pipelines.build     # ~1 min: data, models, reports -> artifacts/
