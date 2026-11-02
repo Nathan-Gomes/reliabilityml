@@ -4,7 +4,7 @@ import pandas as pd
 
 from reliabilityml.classifier.registry import Registry
 from reliabilityml.classifier.rules import rule_for
-from reliabilityml.detection.detectors import EwmaDetector
+from reliabilityml.detection.detectors import EwmaDetector, runs_to_alerts
 from reliabilityml.detection.evaluate import evaluate
 from reliabilityml.features.windows import minute_data, z_matrix, z_scores
 from reliabilityml.generator.simulate import default_train, simulate
@@ -18,6 +18,44 @@ def test_known_faults_are_detected_quickly():
     report = evaluate(EwmaDetector(threshold=10, consecutive=3).detect(z), tel.faults, 4)
     assert report.recall == 1.0
     assert report.median_ttd_min <= 5
+
+
+def test_alert_attribution_tracks_the_peak_contributor():
+    index = pd.date_range("2026-01-01", periods=7, freq="min")
+    score = pd.Series([0.0, 11.0, 12.0, 18.0, 0.0, 0.0, 0.0], index=index)
+    culprit = pd.Series(
+        [
+            "error_rate|api-gateway",
+            "error_rate|api-gateway",
+            "error_rate|api-gateway",
+            "latency_p95|orders-service",
+            "error_rate|api-gateway",
+            "error_rate|api-gateway",
+            "error_rate|api-gateway",
+        ],
+        index=index,
+    )
+
+    alerts = runs_to_alerts(score, threshold=10, consecutive=2, culprit=culprit, cooldown=2)
+
+    assert len(alerts) == 1
+    assert alerts[0].fired_at == index[2]
+    assert (alerts[0].signal, alerts[0].service, alerts[0].peak) == (
+        "latency_p95",
+        "orders-service",
+        18.0,
+    )
+
+    score.iloc[1:4] = [17.0, 12.0, 11.0]
+    culprit.iloc[1] = "cpu_utilization|payments-service"
+    alerts = runs_to_alerts(score, threshold=10, consecutive=2, culprit=culprit, cooldown=2)
+
+    assert alerts[0].fired_at == index[2]
+    assert (alerts[0].signal, alerts[0].service, alerts[0].peak) == (
+        "cpu_utilization",
+        "payments-service",
+        17.0,
+    )
 
 
 def test_predictions_are_deterministic(artifacts):

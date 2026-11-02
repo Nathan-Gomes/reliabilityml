@@ -33,14 +33,15 @@ def runs_to_alerts(
     score: pd.Series,
     threshold: float,
     consecutive: int,
-    culprit: pd.DataFrame,
+    culprit: pd.Series,
     cooldown: int = 5,
 ) -> list[Alert]:
     """Turn a per-minute score into alerts.
 
     An alert fires on the Nth consecutive minute above threshold and stays open until the
     score has been below threshold for `cooldown` minutes. `culprit` holds, per minute, the
-    column with the largest contribution, formatted "signal|service".
+    column with the largest contribution, formatted "signal|service". The alert is attributed
+    to the contributor at its peak, while `fired_at` still records when the threshold first held.
     """
     above = (score.to_numpy() > threshold).astype(np.int8)
     idx = score.index
@@ -54,17 +55,19 @@ def runs_to_alerts(
             quiet = 0
             if open_alert is None and run >= consecutive:
                 j = i - consecutive + 1
-                key = culprit.iloc[i]
+                peak_i = j + int(np.argmax(score.iloc[j : i + 1].to_numpy()))
+                key = culprit.iloc[peak_i]
                 signal, service = str(key).split("|")
                 open_alert = {
                     "fired": idx[i],
                     "start": idx[j],
                     "service": service,
                     "signal": signal,
-                    "peak": float(score.iloc[i]),
+                    "peak": float(score.iloc[peak_i]),
                 }
-            elif open_alert is not None:
-                open_alert["peak"] = max(open_alert["peak"], float(score.iloc[i]))
+            elif open_alert is not None and float(score.iloc[i]) > open_alert["peak"]:
+                signal, service = str(culprit.iloc[i]).split("|")
+                open_alert.update(signal=signal, service=service, peak=float(score.iloc[i]))
         else:
             run = 0
             if open_alert is not None:
