@@ -54,3 +54,9 @@ def test_dashboard_reports(client):
     for name in ("detection", "classifier", "slo", "rag", "drift", "gate"):
         assert client.get(f"/api/report/{name}").status_code == 200
     assert client.get("/api/registry").json()["aliases"]["production"] >= 1
+
+
+def test_service_history_rejects_unsupported_windows(client):
+    assert client.get("/api/services", params={"hours": 1}).status_code == 200
+    for hours in (0, 169):
+        assert client.get("/api/services", params={"hours": hours}).status_code == 422

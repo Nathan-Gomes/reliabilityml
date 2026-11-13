@@ -10,10 +10,10 @@ from __future__ import annotations
 import os
 import time
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 import pandas as pd
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -239,13 +239,13 @@ def registry() -> dict:
 
 
 @app.get("/api/services")
-def services(hours: int = 24) -> dict:
+def services(hours: Annotated[int, Query(ge=1, le=168)] = 24) -> dict:
     """Service overview from the production replay: the last `hours` hours at 5-minute resolution."""
     m = state.ops_minutes
     end = m["error_rate"].index[-1]
     out = {}
     for signal in ("request_rate", "latency_p95", "latency_p99", "error_rate", "cpu_utilization", "memory_utilization"):
-        frame = m[signal].loc[end - pd.Timedelta(hours=min(hours, 168)) :].resample("5min").mean()
+        frame = m[signal].loc[end - pd.Timedelta(hours=hours) :].resample("5min").mean()
         out[signal] = {
             "ts": [t.isoformat() for t in frame.index],
             **{svc: frame[svc].round(5).tolist() for svc in frame.columns if frame[svc].notna().any()},
